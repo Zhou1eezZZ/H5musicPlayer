@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>  
+<html>  
+<meta charset="utf-8">  
+<head>  
+<style>  
+#songlist {  
+    border: 1px;  
+    background-color: #c4c4c4;  
+}  
+  
+.odd {  
+    background-color: #ffffff;  
+}  
+  
+.cur {  
+    background-color: #444444;  
+}  
+  
+ul {  
+    list-style-type: none;  
+    margin: 0px;  
+    width: 400px;  
+}  
+  
+ul li {  
+    list-style-type: none;  
+    display: block;  
+    width: 100%;  
+    background: #ccc;  
+}  
+  
+ul li:hover {  
+    background: #999;  
+}  
+</style>  
+<script type="text/javascript"  
+    src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.min.js"></script>  
+</head>  
+<body>  
+    <audio id="myaudio" src="1.mp3" controls="controls" loop="false">  
+        您的浏览器不支持 audio 标签。  
+    </audio>  
+    <!-- <button  onclick="autoPlay()" style="BACKGROUND-IMAGE: url(next.jpg);BACKGROUND-REPEAT: no-repeat;" /> -->  
+    <input type="image" src="next.jpg" onclick="autoPlay()" />  
+    <input type="file" id="files" name="files[]"   multiple  webkitdirectory=""  
+        style="display: none" accept="audio/mpeg" />  
+    <input type="button" id="select" value="选择歌曲文件夹" onclick="selectMP3()">  
+    <div>  
+        <ul id="songlist">  
+        </ul>  
+    </div>  
+    <script language="javascript" type="text/javascript">  
+        var input = document.getElementById('files');  
+        var songlist = document.getElementById('songlist');  
+        var song = songlist.innerHTML;  
+  
+        var myAuto = document.getElementById('myaudio');  
+  
+        input.onchange = function(e) {  
+            var files = e.target.files; // FileList  
+            var count = 0;  
+          
+            for (var i = 0, f; f = files[i]; ++i) {  
+                //file  have .name   
+                   
+             var path = f.name  || f.webkitRelativePath ;    
+  
+                if (/.*\.mp3$/.test(path)) {  
+                    var url;  
+                    if (window.createObjectURL) {  
+                        url = window.createObjectURL(files[i])  
+                    } else if (window.createBlobURL) {  
+                        url = window.createBlobURL(files[i])  
+                    } else if (window.URL && window.URL.createObjectURL) {  
+                        url = window.URL.createObjectURL(files[i])  
+                    } else if (window.webkitURL  
+                            && window.webkitURL.createObjectURL) {  
+                        url = window.webkitURL.createObjectURL(files[i])  
+                    }  
+  
+                    if (count % 2 === 0) {  
+  
+                        song += '<li class="song odd" onclick="changeSrc(event)" ><input  type="hidden" value="'+url+'"/>'  
+                                + path + '</li>';  
+                    } else {  
+                        song += '<li class="song even" onclick="changeSrc(event)" ><input  type="hidden"  value="'+url+'"/>'  
+                                + path + '</li>';  
+                    }  
+                    count++;  
+                }  
+            }  
+            songlist.innerHTML = song;  
+          
+        }  
+  
+        function autoPlay() {  
+            var next = $(".cur").next();  
+  
+            next.addClass("cur").siblings().removeClass("cur");  
+            var cur = document.getElementsByClassName("cur");  
+            myAuto.src = cur[0].firstChild.value;  
+            myAuto.play();  
+        }  
+        function selectMP3() {  
+  
+            input.click();  
+        }  
+        function changeSrc(event) {  
+  
+            event = event ? event : window.event;  
+            var obj = event.srcElement ? event.srcElement : event.target;  
+            $(obj).addClass("cur").siblings().removeClass("cur");  
+            myAuto.src = obj.firstChild.value;  
+            myAuto.play();  
+  
+        }  
+    </script>  
+</body>  
+</html>  

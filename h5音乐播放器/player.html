@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>h5音乐播放器</title>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/main.js" async></script>
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+</head>
+
+<body>
+	<div class="nav">
+		<h1 class="logo">H5音乐播放器</h1>
+		<input type="file" id="files" name="files[]"   multiple  webkitdirectory=""  
+        style="display: none" accept="audio/mpeg" /> 
+		<input type="button" id="select" value="搜索本地音乐" onclick="selectMP3()"/>
+	</div>
+	<div class="content">
+		<div class="left">
+			<div class="contentNav">
+				<h1>歌曲列表</h1>
+			</div>
+			<ul class="musicList" id="songlist">
+			</ul>
+		</div>
+		<div class="right">
+			<img src="img/player.png" alt="音乐播放图片" />
+			<h1>歌曲评论</h1>
+			<p style="color: #69696a;height:40px;line-height: 40px;">TIPS:双击评论可删除!</p>
+			<div style="width: 100%;height: 32px; box-sizing: border-box;">
+				<input class="commentFiled" id="commentFiled" type="text" name="comment" placeholder="输入您对这首歌的评论吧.." />
+				<input class="commentButton" id="commentButton" type="button" name="submit" value="提交" onclick="commentSubmit()" />
+			</div>
+			<ul class="commentList" id="commentList">
+			</ul>
+		</div>
+	</div>
+	<div class="playerController">
+		<audio id="myaudio" ondurationchange="getDuration()">  
+			您的浏览器不支持 audio 标签。 
+		</audio>
+		<div class="audio-left">
+			<span class="imgSpan">
+				<img src="img/backward.png" alt="上一首" onClick="prevSong()" />
+				<img id="audioPlayer" src="img/play.png" alt="暂停" />
+				<img src="img/foreward.png" alt="下一首" onClick="nextSong()" />
+			</span>
+		</div>
+		<div class="audio-right">
+			<p id="songName" style="max-width: 536px;line-height: 35px">点击右上角按钮搜索歌曲</p>
+			<div class="progress-bar-bg" id="progressBarBg">
+				<span id="progressDot"></span>
+				<div class="progress-bar" id="progressBar"></div>
+			</div>
+			<div class="audio-time">
+				<span class="audio-length-current" id="audioCurTime">00:00</span>
+				<span class="audio-length-total" id="audioDuration">00:00</span>
+			</div>
+		</div>
+		<div class="volumeIcon">
+			<span class="imgSpan">
+				<img id="volumeLogo" src="img/SOUND PLUS.png" alt="音量图标" />
+			</span>
+		</div>
+		<div class="volumeController">
+			<div class="progress-bar-bg" id="progressBarBg_volume" style="margin-top: 51px;">
+				<span id="progressDot_volume"></span>
+				<div class="progress-bar" id="progressBar_volume"></div>
+			</div>
+		</div>
+		<div class="playStyle">
+			<img src="img/列表循环.png" alt="列表循环" onClick="switchToRandom(this)" />
+			<img src="img/随机.png" alt="随机" style="display: none;" onClick="switchToReapt(this)" />
+			<img src="img/单曲循环.png" alt="单曲循环" style="display: none;" onClick="switchToAuto(this)" />
+		</div>
+	</div>
+</body>
+</html>
