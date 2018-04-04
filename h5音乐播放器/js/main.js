@@ -30,10 +30,10 @@ input.onchange = function(e) {
 			if (count % 2 === 0) {  
 
 				song += '<li class="song odd" ondblclick="changeSrc(event);setTitle(this);getComments()" ><input  type="hidden" value="'+url+'"/>'  
-						+ path + '</li>';  
+						+ path + '<div class="songTools"><img src="img/add.png" title="添加到" onclick="addSongToSheet(this)" /><img src="img/close.png" title="删除歌曲" onclick="deleteSong(this)" /></div></li>';  
 			} else {  
 				song += '<li class="song even" ondblclick="changeSrc(event);setTitle(this);getComments()" ><input  type="hidden"  value="'+url+'"/>'  
-						+ path + '</li>';  
+						+ path + '<div class="songTools"><img src="img/add.png" title="添加到" onclick="addSongToSheet(this)" /><img src="img/close.png" title="删除歌曲" onclick="deleteSong(this)" /></div></li>';  
 			}  
 			count++;
 		}  
@@ -407,7 +407,7 @@ function commentSubmit(){
 	var comments = commentList.innerHTML;
 	var val = $('#commentFiled').val();
 	var myDate = new Date();
-	if($("#songName").text()!="点击右上角按钮搜索歌曲"){
+	if($("#songName").text()!="点击右上角按钮搜索歌曲" && isLogin){
 		if(val!=""){
 			comments += "<li ondblclick='deleteComments(this)'>"+ myDate.toLocaleDateString() + myDate.toLocaleTimeString() + "</br>" + val +"</li>";
 			
@@ -457,8 +457,184 @@ function getComments(){
 }
 //删除评论功能
 function deleteComments(e){
-	if(confirm("确定删除本条评论？")){
-		$(e).remove();
-		commentsToLocal();
+	if(isLogin){
+		if(confirm("确定删除本条评论？")){
+			$(e).remove();
+			commentsToLocal();
+		}
+	}else{
+		alert("登陆后才能执行删除操作");
+	}
+}
+
+
+//点击加号按钮跳出创建歌单的框
+function addSheet(){
+	$("#floatNav").css("display","block");
+	$("#songSheetInput").focus();
+}
+
+//取消 创建歌单
+function cancelCreateSheet(){
+	$("#floatNav").css("display","none");
+	$("#songSheetInput").val("");
+}
+
+//创建 创建歌单
+function createSheet(){
+	var songSheetName = $("#songSheetInput").val();
+	if(songSheetName!=""){
+		$("#songSheetTabs").append("<h1 onclick='selectTab(this)'>"+songSheetName+"</h1>");
+		$("#songListTabs").append("<ul class='musicList hidden' id='songlist1'><div class='navInSheet'><p onclick='deleteSheet(this)'>删除本歌单</p></div></ul>");
+		$("#songSheetInput").val("");
+		$("#floatNav").css("display","none");
+	}else{
+		alert("歌单名不能为空！");
+	}
+}
+
+//选择相应歌单的TAB
+function selectTab(e){
+	$(e).addClass("selected");
+	$(e).siblings().removeClass("selected");
+	var index = $(e).index();
+	var targetUl = $("#songListTabs").children().eq(index);
+	targetUl.removeClass("hidden");
+	targetUl.siblings().addClass("hidden");
+}
+
+//歌单中添加歌曲按钮点击函数
+var songLiValue = "";
+function addSongToSheet(e){
+	var length = $("#songSheetTabs").children().length;
+	if(length==1){
+		alert("请先新建歌单！");
+	}else{
+		$("#floatNav1").css("display","block");
+		songLiValue = "";
+		songLiValue = $(e).parent().parent().prop("outerHTML");
+		//console.log(songLiValue);
+		for(var i=1;i<length;i++){
+			var sheetName = $("#songSheetTabs").children().eq(i).html();
+			$("#sheetList").append("<li onclick='clickSheet(this)'>"+sheetName+"</li>");
+		}
+	}
+}
+//关闭选择歌单的浮层
+function closeFloat(){
+	$("#floatNav1").css("display","none");
+	$("#sheetList").html("");
+}
+//用户点击要添加的歌单
+function clickSheet(e){
+	var index = $(e).index() + 1;
+	var targetUl = $("#songListTabs").children().eq(index);
+	targetUl.append(songLiValue);
+	songLiValue = "";
+	$("#floatNav1").css("display","none");
+	$("#sheetList").html("");
+}
+
+//删除歌单按钮
+function deleteSheet(e){
+	if(confirm("确定删除此歌单?")){
+		var index = $(e).parent().parent().index();
+		$(e).parent().parent().remove();
+		$("#songSheetTabs").children().eq(index).remove();
+
+		$("#songSheetTabs").children().eq(0).addClass("selected");
+		$("#songSheetTabs").children().eq(0).siblings().removeClass("selected");
+		$("#songListTabs").children().eq(0).removeClass("hidden");
+		$("#songListTabs").children().eq(0).siblings().addClass("hidden");
+	}
+}
+//删除歌曲
+function deleteSong(e){
+	if(confirm("确定删除此歌曲?")){
+		var nowPlaying = $(e).parent().parent().text();
+		if(nowPlaying == $("#songName").text()){
+			nextSong();
+		}
+		$(e).parent().parent().remove();
+	}
+}
+
+//点击登陆/注册按钮
+function signinLoginin(){
+	$("#loginDiv").removeClass("hidden");
+}
+//关闭浮层
+function closeFloat(e){
+	$(e).parent().addClass("hidden");
+}
+
+function loginToSignin(){
+	$("#loginDiv").addClass("hidden");
+	$("#signinDiv").removeClass("hidden");
+}
+function signinToLogin(){
+	$("#signinDiv").addClass("hidden");
+	$("#loginDiv").removeClass("hidden");
+}
+
+//获取用户注册时输入的账号和密码 保存到本地
+function signinButton(){
+	var account = $("#signinAccount").val();
+	var password = $("#signinPassword").val();
+	if(account!="" && password!=""){
+		localStorage.setItem("h5playerAccount",account);
+		localStorage.setItem("h5playerPassword",password);
+		$("#signinDiv").addClass("hidden");
+		alert("注册成功");
+	}else{
+		alert("请输入账号和密码！");
+	}
+}
+//判断登陆
+var isLogin = false;
+function loginButton(){
+	var account = $("#loginAccount").val();
+	var password = $("#loginPassword").val();
+	if(account!="" && password!=""){
+		if(localStorage.getItem("h5playerAccount")!=null){
+			if(account==localStorage.getItem("h5playerAccount") && password==localStorage.getItem("h5playerPassword")){
+				//登陆成功
+				isLogin = true;
+				alert("登陆成功");
+				$("#loginDiv").addClass("hidden");
+				$("#personalCenter").removeClass("hidden");
+				$("#loginButton").addClass("hidden");
+			}else{
+				alert("账号密码错误。");
+			}
+		}else{
+			alert("账号密码错误。");
+		}
+	}else{
+		alert("请输入账号和密码！");
+	}
+}
+
+//点击个人中心
+function personalCenter(){
+	$("#personalCenterDiv").removeClass("hidden");
+}
+
+//清理歌曲评论的缓存
+function clearCache(){
+	if(confirm("这将删除浏览器中的所有缓存(包括当前已经注册的账号和所有歌曲评论)！确定操作？")){
+		localStorage.clear();
+		alert("清理成功");
+	}
+}
+
+//退出登陆
+function logout(){
+	if(confirm("确定退出登陆吗？")){
+		isLogin = false;
+		alert("账号已退出登陆");
+		$("#personalCenter").addClass("hidden");
+		$("#loginButton").removeClass("hidden");
+		$("#personalCenterDiv").addClass("hidden");
 	}
 }

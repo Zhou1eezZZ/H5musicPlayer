@@ -9,19 +9,74 @@
 </head>
 
 <body>
+	<div class="personalCenterDiv hidden" id="personalCenterDiv">
+		<img class="closeImg" src="img/close.png" alt="close" onclick="closeFloat(this)" />
+		<h1>个人中心</h1>
+		<input type="button" name="clearCache" value="清理缓存" onclick="clearCache()" />
+		<input type="button" name="logout" value="退出登陆" onclick="logout()" />
+	</div>
+	<div class="loginDiv hidden" id="loginDiv">
+		<img class="closeImg" src="img/close.png" alt="close" onclick="closeFloat(this)" />
+		<h1>用户登陆</h1>
+		<div class="formItem">
+			<label>账号:</label>
+			<input id="loginAccount" type="text" name="account" />
+		</div>
+		<div class="formItem">
+			<label>密码:</label>
+			<input id="loginPassword" type="password" name="password" minlength="6" maxlength="16"/>
+			<p class="signEntrance" onclick="loginToSignin()">没有账号？</p>
+		</div>
+		<div class="formItem" style="margin-top: 50px;">
+			<input class="loginConfirmBtn" type="button" name="create" onclick="loginButton()" value="登 陆" />
+		</div>
+	</div>
+	<div class="loginDiv hidden" id="signinDiv">
+		<img class="closeImg" src="img/close.png" alt="close" onclick="closeFloat(this)" />
+		<h1>用户注册</h1>
+		<div class="formItem">
+			<label>账号:</label>
+			<input id="signinAccount" type="text" name="account" />
+		</div>
+		<div class="formItem">
+			<label>密码:</label>
+			<input id="signinPassword" type="password" name="password" minlength="6" maxlength="16" placeholder="请输入6-16位的密码"/>
+			<p class="signEntrance" onclick="signinToLogin()">已有账号？</p>
+		</div>
+		<div class="formItem" style="margin-top: 50px;">
+			<input class="loginConfirmBtn" type="button" name="create" value="注 册" onclick="signinButton()" />
+		</div>
+	</div>
+	<div class="floatNav" id="floatNav" style="display: none;">
+		<h1>输入要创建的歌单名称：</h1>
+		<input class="songSheetInput" id="songSheetInput" type="text" name="songSheet" />
+		<input class="createSheet" type="button" name="create" onclick="createSheet()" value="创建" />
+		<input class="cancelCreate" type="button" name="canel" onclick="cancelCreateSheet()" value="取消" />
+	</div>
+	<div class="floatNav floatNav1" id="floatNav1" style="display: none;">
+		<h1>选择要添加该歌曲的歌单</h1>
+		<ul class="sheetList" id="sheetList"></ul>
+		<input class="cancelAdd" type="button" name="canel" onclick="closeFloat()" value="取消" />
+	</div>
 	<div class="nav">
 		<h1 class="logo">H5音乐播放器</h1>
 		<input type="file" id="files" name="files[]"   multiple  webkitdirectory=""  
         style="display: none" accept="audio/mpeg" /> 
 		<input type="button" id="select" value="搜索本地音乐" onclick="selectMP3()"/>
+		<p class="loginButton" id="loginButton" onclick="signinLoginin()">登陆/注册</p>
+		<p class="personalCenter hidden" id="personalCenter" onclick="personalCenter()">个人中心</p>
 	</div>
 	<div class="content">
 		<div class="left">
 			<div class="contentNav">
-				<h1>歌曲列表</h1>
+				<div class="songSheetTabs" id="songSheetTabs">
+					<h1 class="selected" onclick="selectTab(this)">本地歌曲列表</h1>
+				</div>
+				<img style="width: 34px;float: right;margin-top: 2px;cursor:pointer;" src="img/add.png" alt="addMusicList" title="新建歌单" onclick="addSheet()" />
 			</div>
-			<ul class="musicList" id="songlist">
-			</ul>
+			<div class="songListTabs" id="songListTabs">
+				<ul class="musicList" id="songlist"></ul>
+			</div>
 		</div>
 		<div class="right">
 			<img src="img/player.png" alt="音乐播放图片" />
